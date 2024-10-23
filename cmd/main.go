@@ -20,12 +20,11 @@ import (
 	"crypto/ecdsa"
 	"flag"
 	"fmt"
+	"github.com/tunelo/sudp"
+	"github.com/tunelo/tunelo"
+	"github.com/tunelo/utun"
 	"net"
 	"os"
-	"vnet"
-
-	"github.com/tunelo/sudp"
-	"github.com/tunelo/utun"
 )
 
 func main() {
