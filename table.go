@@ -14,7 +14,7 @@
  * Date: 2024
  */
 
-package vnet
+package tunelo
 
 import (
 	"encoding/binary"

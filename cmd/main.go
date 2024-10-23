@@ -20,11 +20,12 @@ import (
 	"crypto/ecdsa"
 	"flag"
 	"fmt"
+	"net"
+	"os"
+
 	"github.com/tunelo/sudp"
 	"github.com/tunelo/tunelo"
 	"github.com/tunelo/utun"
-	"net"
-	"os"
 )
 
 func main() {
@@ -159,7 +160,7 @@ func main() {
 			NetworkAddress: raddr,
 			PublicKey:      pub,
 		}
-		c, err := vnet.NewVnetClient(cidr, peer, &laddr, &paddr)
+		c, err := tunelo.NewVnetClient(cidr, peer, &laddr, &paddr)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -178,7 +179,7 @@ func main() {
 			os.Exit(2)
 		}
 
-		v, err := vnet.NewVnetSwitch(cidr, utun.NOPEER, config)
+		v, err := tunelo.NewVnetSwitch(cidr, utun.NOPEER, config)
 		if err != nil {
 			fmt.Println(err)
 			return
