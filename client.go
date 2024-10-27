@@ -74,11 +74,14 @@ func (c *VnetClient) Run() error {
 	for {
 		n, e = c.Tun.Read(buf)
 		if e != nil {
+			c.sock.Close()
 			break
 		}
 		if e = c.sock.Send(buf[:n]); e != nil {
 			break
 		}
 	}
-	return fmt.Errorf("%v, %v", c.sock.Close(), e)
+
+	ge := <-err
+	return fmt.Errorf("%v, %v", ge, e)
 }
