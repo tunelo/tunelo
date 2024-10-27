@@ -122,7 +122,5 @@ func (v *VnetSwitch) Run() error {
 			continue
 		}
 	}
-	v.sock.Close()
-	ge := <-err
-	return fmt.Errorf("%v, %v", ge, e)
+	return fmt.Errorf("%v, %v", v.sock.Close(), e)
 }
