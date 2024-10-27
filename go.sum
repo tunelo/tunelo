@@ -1,5 +1,7 @@
 github.com/tunelo/sudp v0.0.0-20241023164324-1f8e3f47fd38 h1:w8sZRhfojbGaEOTmun8c8r+4x9gkUmRtYJsvmPbNEW0=
 github.com/tunelo/sudp v0.0.0-20241023164324-1f8e3f47fd38/go.mod h1:6pBaDEfJDyX1eUZOSUoC0UdGtGRSdk1+uE5eHrTalWk=
+github.com/tunelo/sudp v0.0.0-20241027131431-750da77b0b52 h1:4bMFS2IIe5xRj8oGJEpX6eN5OxgcyleweHayS0DMXKc=
+github.com/tunelo/sudp v0.0.0-20241027131431-750da77b0b52/go.mod h1:6pBaDEfJDyX1eUZOSUoC0UdGtGRSdk1+uE5eHrTalWk=
 github.com/tunelo/utun v0.0.0-20241023164223-14eec6175686 h1:9M0gov/wQHylNkYjYYXMtct0tx6r6XKrhbHr2+/HObg=
 github.com/tunelo/utun v0.0.0-20241023164223-14eec6175686/go.mod h1:Gwkj9qKoKpdwIsFM0iQRRAxwR+ntwSKMJT8WEOmtlbg=
 golang.org/x/net v0.30.0 h1:AcW1SDZMkb8IpzCdQUaIq2sP4sZ4zw+55h6ynffypl4=
