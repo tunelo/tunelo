@@ -108,6 +108,7 @@ func (c *VnetClient) Run() error {
 			break
 		}
 	}
+	fmt.Println("Estoy aca...")
 	c.sock.Close()
 	ge := <-err
 	return fmt.Errorf("%v, %v", ge, e)
