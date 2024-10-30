@@ -54,7 +54,7 @@ else
     echo "  $ sudo ip route add default via " $DEFAULT_GW
 fi
 
-echo \
+./tunelo \
     -sudp_endpoint $SUDP_ENDPOINT \
     -sudp_pri $SUDP_PRI \
     -sudp_pub $SUDP_PUB \
