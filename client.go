@@ -19,6 +19,8 @@ package tunelo
 import (
 	"fmt"
 	"net"
+	"strings"
+	"time"
 
 	"github.com/tunelo/sudp"
 	"github.com/tunelo/utun"
@@ -49,6 +51,28 @@ func NewVnetClient(cird string, peer string, laddr *sudp.LocalAddr, raddr *sudp.
 	return &vnetc, nil
 }
 
+func display(anim bool, peer string, tun string, tunip string, mtu int) {
+
+	if anim {
+		go func() {
+			const col = 20
+			position := 0
+			direction := 1
+			for {
+				bar := strings.Repeat(" ", position) + "0" + strings.Repeat(" ", col-position-1)
+				fmt.Printf("\r[%s] Connected (%s), tun: %s, inet %s, mtu: %d  Ctr-C to exit ", bar, peer, tunip, mtu)
+				time.Sleep(100 * time.Millisecond)
+				position += direction
+				if position == col-1 || position == 0 {
+					direction *= -1
+				}
+			}
+		}()
+	} else {
+		fmt.Printf("[%s] Connected (%s), tun: %s, inet %s, mtu: %d  Ctr-C to exit ", peer, tunip, mtu)
+	}
+}
+
 func (c *VnetClient) Run() error {
 	var (
 		n int
@@ -56,6 +80,8 @@ func (c *VnetClient) Run() error {
 	)
 	err := make(chan error)
 	buf := make([]byte, c.Tun.MTU)
+
+	display(true, c.sock.RemoteAddr(), c.Tun.IP, c.Tun.MTU)
 
 	go func() {
 		for {
