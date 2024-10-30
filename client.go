@@ -81,7 +81,7 @@ func (c *VnetClient) Run() error {
 	err := make(chan error)
 	buf := make([]byte, c.Tun.MTU)
 
-	display(true, c.sock.RemoteAddress(), c.Tun.IP.String(), c.Tun.MTU)
+	display(true, c.sock.RemoteAddress(), c.Tun.Name, c.Tun.IP.String(), c.Tun.MTU)
 
 	go func() {
 		for {
