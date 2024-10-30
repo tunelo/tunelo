@@ -84,14 +84,15 @@ func (c *VnetClient) Run() error {
 	display(true, c.sock.RemoteAddress(), c.Tun.Name, c.Tun.IP.String(), c.Tun.MTU)
 
 	go func() {
-		defer c.Tun.Close()
 		for {
 			buff, e := c.sock.Recv()
 			if e != nil {
+				c.Tun.Close()
 				err <- fmt.Errorf("at sudp recv: %v, %v", e, c.sock.GetErrors())
 				return
 			}
 			if _, e := c.Tun.Write(buff); e != nil {
+				c.Tun.Close()
 				err <- fmt.Errorf("at tun write: %v", e)
 				return
 			}
