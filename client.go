@@ -60,7 +60,7 @@ func display(anim bool, peer string, tun string, tunip string, mtu int) {
 			direction := 1
 			for {
 				bar := strings.Repeat(" ", position) + "0" + strings.Repeat(" ", col-position-1)
-				fmt.Printf("\r[%s] Connected (%s), tun: %s, inet %s, mtu: %d  Ctr-C to exit ", bar, peer, tunip, mtu)
+				fmt.Printf("\r[%s] Connected (%s), tun: %s, inet %s, mtu: %d  Ctr-C to exit ", bar, peer, tun, tunip, mtu)
 				time.Sleep(100 * time.Millisecond)
 				position += direction
 				if position == col-1 || position == 0 {
@@ -69,7 +69,7 @@ func display(anim bool, peer string, tun string, tunip string, mtu int) {
 			}
 		}()
 	} else {
-		fmt.Printf("[%s] Connected (%s), tun: %s, inet %s, mtu: %d  Ctr-C to exit ", peer, tunip, mtu)
+		fmt.Printf("[%s] Connected (%s), tun: %s, inet %s, mtu: %d  Ctr-C to exit ", peer, tun, tunip, mtu)
 	}
 }
 
