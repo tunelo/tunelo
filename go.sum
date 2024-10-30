@@ -1,7 +1,7 @@
-github.com/tunelo/sudp v0.0.0-20241030203250-95dedfd4bb91 h1:dn6DeBWDn9r64G3dftqIc+6vpTENSyi3OdIJ3OH/85c=
-github.com/tunelo/sudp v0.0.0-20241030203250-95dedfd4bb91/go.mod h1:6pBaDEfJDyX1eUZOSUoC0UdGtGRSdk1+uE5eHrTalWk=
 github.com/tunelo/sudp v0.0.0-20241030204531-24c8283c12bd h1:KTtl8HXjrMioHesMaCwUaLiQ/rUHSpzI9PzOJGcBDWg=
 github.com/tunelo/sudp v0.0.0-20241030204531-24c8283c12bd/go.mod h1:6pBaDEfJDyX1eUZOSUoC0UdGtGRSdk1+uE5eHrTalWk=
+github.com/tunelo/sudp v0.0.0-20241030210524-ee573d2645f0 h1:vyTC0ERyKXt7kzAp8FHzQN2NQ+hAQU7lcpPCARe/c3M=
+github.com/tunelo/sudp v0.0.0-20241030210524-ee573d2645f0/go.mod h1:6pBaDEfJDyX1eUZOSUoC0UdGtGRSdk1+uE5eHrTalWk=
 github.com/tunelo/utun v0.0.0-20241030202039-b05c54e16b18 h1:mpRgfS7ibKtpS4qoxoP7IZl95inmPAgzGIlRUt4dHAg=
 github.com/tunelo/utun v0.0.0-20241030202039-b05c54e16b18/go.mod h1:Gwkj9qKoKpdwIsFM0iQRRAxwR+ntwSKMJT8WEOmtlbg=
 golang.org/x/net v0.30.0 h1:AcW1SDZMkb8IpzCdQUaIq2sP4sZ4zw+55h6ynffypl4=
