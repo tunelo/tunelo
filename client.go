@@ -86,6 +86,7 @@ func (c *VnetClient) Run() error {
 	go func() {
 		for {
 			buff, e := c.sock.Recv()
+			fmt.Println(e)
 			if e != nil {
 				c.Tun.Close()
 				err <- fmt.Errorf("at sudp recv: %v, %v", e, c.sock.GetErrors())
