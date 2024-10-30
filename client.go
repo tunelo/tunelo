@@ -102,6 +102,7 @@ func (c *VnetClient) Run() error {
 
 	for {
 		n, e = c.Tun.Read(buf)
+		fmt.Println("Tun read", n, e)
 		if e != nil {
 			break
 		}
