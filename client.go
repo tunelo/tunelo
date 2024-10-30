@@ -86,7 +86,6 @@ func (c *VnetClient) Run() error {
 	go func() {
 		for {
 			buff, e := c.sock.Recv()
-			fmt.Println(e)
 			if e != nil {
 				c.Tun.Close()
 				err <- fmt.Errorf("at sudp recv: %v, %v", e, c.sock.GetErrors())
@@ -102,7 +101,6 @@ func (c *VnetClient) Run() error {
 
 	for {
 		n, e = c.Tun.Read(buf)
-		fmt.Println("Tun read", n, e)
 		if e != nil {
 			break
 		}
@@ -110,8 +108,7 @@ func (c *VnetClient) Run() error {
 			break
 		}
 	}
-	fmt.Println("Estoy aca...")
-	c.sock.Close()
 	ge := <-err
+	defer c.sock.Close()
 	return fmt.Errorf("%v, %v", ge, e)
 }
