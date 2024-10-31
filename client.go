@@ -33,7 +33,7 @@ type VnetClient struct {
 }
 
 func NewVnetClient(cird string, peer string, laddr *sudp.LocalAddr, raddr *sudp.RemoteAddr) (*VnetClient, error) {
-	client, e := sudp.Connect(laddr, raddr)
+	client, e := sudp.Connect(laddr, raddr, nil)
 	if e != nil {
 		return nil, e
 	}
