@@ -20,6 +20,7 @@ Example:
 ```bash
 $ ./tunelo -keygen server
 ```
+This command creates a private/public key pair with the prefix server: server_public.pem and server_private.pem. Do the same for the client
 
 ## Server Instructions
 Create a copy of the `sudp_config.json` file and modify it as needed:
