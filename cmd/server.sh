@@ -13,12 +13,8 @@ echo "  $ sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE"
 echo "2. Enable IP Forward"
 echo "  $ sudo echo 1 > /proc/sys/net/ipv4/ip_forward"
 
-
 ./tunelo \
-    -sudp_endpoint $SUDP_ENDPOINT \
-    -sudp_pri $SUDP_PRI \
-    -sudp_pub $SUDP_PUB \
-    -sudp_vaddr $SUDP_VADDR \
-    -utun_peer $UTUN_PEER \
-    -utun_vaddr $UTUN_VADDR
+    -mode=server \
+    -sudp_config $SUDP_CONFIG \
+    -utun_vaddr  $UTUN_VADDR
 

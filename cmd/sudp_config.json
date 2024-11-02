@@ -1,14 +1,14 @@
 {
-    "server": {
-      "virtual_address": 0,
-      "listen": "0.0.0.0",
-      "port": 7000,
-      "private_key": "sdtl_private.pem"
-    },
-    "peers": [
-      {
-        "virtual_address": 1001,
-        "public_key": "public.pem"
-      }
-    ]
-  }
+  "server": {
+    "virtual_address": 0,
+    "listen": "0.0.0.0",
+    "port": 7000,
+    "private_key": "server_private.pem"
+  },
+  "peers": [
+    {
+      "virtual_address": 1001,
+      "public_key": "client_public.pem"
+    }
+  ]
+}
