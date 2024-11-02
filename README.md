@@ -3,6 +3,8 @@
 
 **Tunelo** is a powerful networking tool designed to create secure, private **virtual LANs** (Local Area Networks) over the Internet. By utilizing Tunelo, users can connect remote servers and clients seamlessly, enabling them to communicate as if they were part of the same local network, regardless of their physical locations.
 
+![Tunelo Overview](https://github.com/tunelo/media/blob/6593924f4943bcc255832f3a5eb30d622ce2ca91/tunelo.png)
+
 ## Key Features:
 - **Virtual LAN Creation**: Tunelo allows the establishment of a virtual network where clients and servers can interact with unique virtual addresses and private IPs, facilitating secure and efficient communication.
 - **Gateway Functionality**: The Tunelo server can act as an Internet gateway, providing connected clients with controlled access to external networks while maintaining the security of the virtual environment.
