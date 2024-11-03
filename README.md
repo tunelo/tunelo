@@ -41,7 +41,7 @@ Create a copy of the `sudp_config.json` file and modify it as needed:
   ]
 }
 ```
-**Explanation**: The `virtual_address` of the peer is an arbitrary number that both the client and server must know. It functions similarly to a "port".
+**Explanation**: The SUDP `virtual_address` of the peer is an arbitrary number that both the client and server must know. It functions similarly to a "port".
 
 ### Edit the Server Configuration File
 Ensure the `server_example.conf` file is configured as follows:
