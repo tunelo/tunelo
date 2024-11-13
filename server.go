@@ -35,7 +35,7 @@ type VnetSwitch struct {
 }
 
 func NewVnetSwitch(cird string, peer string, serverConfig string) (*VnetSwitch, error) {
-	laddr, raddrs, e := sudp.ParseConfig(serverConfig)
+	laddr, raddrs, e := sudp.ParseServerConfig(serverConfig)
 	if e != nil {
 		return nil, e
 	}
