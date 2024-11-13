@@ -35,6 +35,7 @@ func main() {
 		raddr  *net.UDPAddr
 		cidr   string
 		peer   string
+		hmac   string
 		vaddr  int
 		peergw bool
 		mode   string
@@ -45,6 +46,7 @@ func main() {
 	flag.IntVar(&vaddr, "sudp_vaddr", -1, "SUDP Virtual Address (e.g., 1001)")
 	flag.StringVar(&mode, "mode", "client", "VPN mode: client | server")
 	flag.StringVar(&config, "sudp_config", "", "SUDP server config file")
+	flag.StringVar(&hmac, "sudp_hmac_key", "", "SUDP header hmac")
 	flag.Func("sudp_pri", "Path to the SUDP Self Private key file in PEM format (e.g., private.prm)", func(s string) error {
 		pri, e = sudp.PrivateFromPemFile(s)
 		if e != nil {
@@ -107,6 +109,7 @@ func main() {
 
 	switch mode {
 	case "client":
+		var sharedHmac []byte
 		if pri == nil {
 			fmt.Println("SUDP Self Private key is not present in the argument list")
 			flag.Usage()
@@ -149,6 +152,12 @@ func main() {
 			os.Exit(2)
 		}
 
+		if hmac == "" {
+			sharedHmac = nil
+		} else {
+			sharedHmac = []byte(hmac)
+		}
+
 		s, _ := net.ResolveUDPAddr("udp4", "0.0.0.0:")
 		laddr := sudp.LocalAddr{
 			VirtualAddress: uint16(vaddr),
@@ -158,6 +167,7 @@ func main() {
 		paddr := sudp.RemoteAddr{
 			VirtualAddress: 0,
 			NetworkAddress: raddr,
+			SharedHmacKey:  sharedHmac,
 			PublicKey:      pub,
 		}
 		c, err := tunelo.NewVnetClient(cidr, peer, &laddr, &paddr)

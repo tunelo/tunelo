@@ -58,6 +58,7 @@ fi
     -sudp_endpoint $SUDP_ENDPOINT \
     -sudp_pri $SUDP_PRI \
     -sudp_pub $SUDP_PUB \
+    -sudp_hmac_key $SUDP_HMAC_KEY \
     -sudp_vaddr $SUDP_VADDR \
     -utun_peer $UTUN_PEER \
     -utun_vaddr $UTUN_VADDR

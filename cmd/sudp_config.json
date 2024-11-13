@@ -8,6 +8,7 @@
   "peers": [
     {
       "virtual_address": 1001,
+      "shared_hmac_key": "",
       "public_key": "client_public.pem"
     }
   ]
