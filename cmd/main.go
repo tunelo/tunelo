@@ -28,6 +28,10 @@ import (
 	"github.com/tunelo/utun"
 )
 
+var (
+	version = "0.1.2-alpha"
+)
+
 func main() {
 	var (
 		pri    *ecdsa.PrivateKey
@@ -40,6 +44,7 @@ func main() {
 		peergw bool
 		mode   string
 		config string
+		ver    bool
 		e      error
 	)
 
@@ -91,9 +96,15 @@ func main() {
 
 	flag.BoolVar(&peergw, "peer_gw", false, "Set true if peer is the new default gw")
 
+	flag.BoolVar(&ver, "version", false, "Show Tunelo and SUDP version")
+
 	prefix := flag.String("keygen", "", "Create a Private/Public key pair in PEM format (e.g., -keygen <prefix>) ")
 
 	flag.Parse()
+
+	if ver {
+		fmt.Printf("Tunelo: v%s - SUDP: %s", version, sudp.Version())
+	}
 
 	if *prefix != "" {
 		pri := fmt.Sprintf("%s_private.pem", *prefix)
