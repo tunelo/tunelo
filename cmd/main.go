@@ -103,7 +103,8 @@ func main() {
 	flag.Parse()
 
 	if ver {
-		fmt.Printf("Tunelo: v%s - SUDP: %s", version, sudp.Version())
+		fmt.Printf("Tunelo: v%s - SUDP: %s\n", version, sudp.Version())
+		os.Exit(2)
 	}
 
 	if *prefix != "" {
