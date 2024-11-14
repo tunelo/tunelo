@@ -192,7 +192,7 @@ func main() {
 			if iteractive {
 				c.Display()
 			} else {
-				fmt.Printf("status=connected")
+				fmt.Println("status=connected")
 			}
 		}
 		err = c.Run()
