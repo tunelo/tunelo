@@ -15,6 +15,33 @@ function show_usage() {
     exit 1
 }
 
+function wait_running() {
+    local logfile=$1
+    local peer=$2
+    while true; do
+        # Verifica si el archivo contiene alguna línea
+        if [[ -f "$logfile" && -s "$logfile" ]]; then
+            line=$(head -n 1 "$logfile")
+            status=$(echo "$line" | grep -o 'status=[^ ]*' | sed 's/status=//')
+
+            # Verificar si hay un mensaje de error
+            if [[ "$status" == "error" ]]; then
+                # Extraer el mensaje de error si existe
+                message=$(echo "$line" | grep -o 'message=.*' | sed 's/message=//')
+                echo "Status: $status, Message: $message"
+            else
+                echo "Status: $status"
+                change_route default $peer
+                rm -f "$temp_sudp_pri" "$temp_sudp_pub"
+                (cleanup_daemon $pid)&
+            fi
+            break
+        fi
+        # Espera 1 segundo antes de volver a comprobar
+        sleep 1
+    done
+}
+
 # Función para obtener el default gateway actual en Linux
 get_default_gw_linux() {
     ip route | grep default | awk '{print $3}' | head -n 1
@@ -50,6 +77,52 @@ get_route_to_peer() {
     fi
 }
 
+cleanup_daemon() {
+    pid_to_wait=$1
+    while ps -p "$pid_to_wait" > /dev/null 2>&1; do sleep 2; done
+    set_route default "$DEFAULT_GW"
+}
+
+check_config_file() {
+    if [[ -z "$SUDP_ENDPOINT" || -z "$SUDP_PRI" || -z "$SUDP_PUB" || -z "$SUDP_VADDR" || -z "$UTUN_PEER" || -z "$UTUN_VADDR" ]]; then
+        echo "Missing mandatory values in config file"
+        exit 1
+    fi
+}
+
+set_route() {
+    local to=$1
+    local target=$2
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        sudo route add "$to" "$target" > /dev/null 2>&1
+    else
+        sudo ip route add "$to" via "$target" > /dev/null 2>&1
+    fi
+}
+
+change_route() {
+    local to=$1
+    local target=$2
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        sudo route change "$to" "$target" > /dev/null 2>&1
+    else
+        sudo ip route change "$to" via "$target" > /dev/null 2>&1
+    fi
+}
+
+set_route_to_peer() {
+    local default=$1
+    if [[ $(get_route_to_peer) == $default ]]; then
+        echo "Route to peer is OK: ($default -> $(get_ip_from_endpoint))"
+    else
+        echo "Setting route to peer: ($default -> $(get_ip_from_endpoint))"
+        if [[ $(get_route_to_peer) == "" ]]; then
+            set_route $(get_ip_from_endpoint) $default
+        else
+            change_route $(get_ip_from_endpoint) $default
+        fi
+    fi
+}
 
 # Función para iniciar el servidor como daemon
 function start_client() {
@@ -70,6 +143,8 @@ function start_client() {
     CONFIG_FILE=$1
     source "$CONFIG_FILE"
 
+    check_config_file
+
     # Crea los archivos de clave publica y privada para pasar a Tunelo
     # Crear archivos temporales
     temp_sudp_pri=$(mktemp)
@@ -85,43 +160,8 @@ function start_client() {
         DEFAULT_GW=$(get_default_gw_linux)
     fi
     echo "Current default gateway: $DEFAULT_GW"
-
-    if [[ $(get_route_to_peer) == $DEFAULT_GW ]]; then
-        echo "Route to peer is OK: ($DEFAULT_GW -> $(get_ip_from_endpoint))"
-    else
-        echo "Setting route to peer: ($DEFAULT_GW -> $(get_ip_from_endpoint))"
-        if [[ $(get_route_to_peer) == "" ]]; then
-            if [[ "$OSTYPE" == "darwin"* ]]; then
-                route -n add $(get_ip_from_endpoint) $DEFAULT_GW
-            else
-                ip route add $(get_ip_from_endpoint) via $DEFAULT_GW
-            fi
-        else
-            if [[ "$OSTYPE" == "darwin"* ]]; then
-                route -n change $(get_ip_from_endpoint) $DEFAULT_GW
-            else
-                ip route change $(get_ip_from_endpoint) via $DEFAULT_GW
-            fi
-        fi
-    fi
-
-    echo "-----------------------------"
-    echo " Manual Configuration Steps  "
-    echo "-----------------------------"
-    echo "1. Change default gateway VPN endpoint"
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        echo "  $ sudo route change default" $UTUN_PEER
-    else
-        echo "  $ sudo ip route add default via " $UTUN_PEER
-    fi
-
-    echo "After disconnect, change default gateway at original configuration"
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        echo "  $ sudo route add default" $DEFAULT_GW
-    else
-        echo "  $ sudo ip route add default via " $DEFAULT_GW
-    fi
-
+    set_route_to_peer $DEFAULT_GW
+    
     rm -f $LOG_FILE
 
     if [[ "$SUDP_HMAC_KEY" == "" ]]; then
@@ -142,8 +182,10 @@ function start_client() {
             -utun_peer $UTUN_PEER \
             -utun_vaddr $UTUN_VADDR > "$LOG_FILE" 2>&1 &
     fi
-    echo $! > "$PID_FILE"
-    echo "Tunelo VPN Client started with PID $(cat $PID_FILE)."
+    pid=$!
+    echo $pid > "$PID_FILE"
+    echo "Tunelo VPN Client started with PID $(cat $PID_FILE)...waiting connection"
+    wait_running $LOG_FILE $UTUN_PEER
 }
 
 function stop_client() {
