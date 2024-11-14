@@ -29,6 +29,7 @@ function wait_running() {
                 # Extraer el mensaje de error si existe
                 message=$(echo "$line" | grep -o 'message=.*' | sed 's/message=//')
                 echo "Status: $status, Message: $message"
+                exit 1
             else
                 echo "Status: $status"
                 change_route default $peer
