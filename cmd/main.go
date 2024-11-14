@@ -98,7 +98,7 @@ func main() {
 	flag.BoolVar(&peergw, "peer_gw", false, "Set true if peer is the new default gw")
 
 	flag.BoolVar(&ver, "version", false, "Show Tunelo and SUDP version")
-	flag.BoolVar(&display, "iterative", false, "Display iteractive mode")
+	flag.BoolVar(&display, "iterative", false, "Display iterative mode")
 
 	prefix := flag.String("keygen", "", "Create a Private/Public key pair in PEM format (e.g., -keygen <prefix>) ")
 
