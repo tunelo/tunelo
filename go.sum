@@ -1,5 +1,3 @@
-github.com/tunelo/sudp v0.0.0-20241113102120-4422cec28223 h1:JXLnJdJi7QM09TLTZJtP4mNNJ8jQWM/kcG8eDDhxPSA=
-github.com/tunelo/sudp v0.0.0-20241113102120-4422cec28223/go.mod h1:6pBaDEfJDyX1eUZOSUoC0UdGtGRSdk1+uE5eHrTalWk=
 github.com/tunelo/sudp v0.0.0-20241113190640-529e706b111a h1:3etUQRIQcUU5q7ku8xhC2BxYX6G5KS3ic3uVHRT5TZM=
 github.com/tunelo/sudp v0.0.0-20241113190640-529e706b111a/go.mod h1:6pBaDEfJDyX1eUZOSUoC0UdGtGRSdk1+uE5eHrTalWk=
 github.com/tunelo/utun v0.0.0-20241031012148-2b4dfef70fa4 h1:sFRaCoj8K/i8BGKO47HF2L/c/QCN/+ak20OD+y7eEAM=
