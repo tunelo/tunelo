@@ -34,19 +34,19 @@ var (
 
 func main() {
 	var (
-		pri        *ecdsa.PrivateKey
-		pub        *ecdsa.PublicKey
-		raddr      *net.UDPAddr
-		cidr       string
-		peer       string
-		hmac       string
-		vaddr      int
-		peergw     bool
-		iteractive bool
-		mode       string
-		config     string
-		ver        bool
-		e          error
+		pri     *ecdsa.PrivateKey
+		pub     *ecdsa.PublicKey
+		raddr   *net.UDPAddr
+		cidr    string
+		peer    string
+		hmac    string
+		vaddr   int
+		peergw  bool
+		display bool
+		mode    string
+		config  string
+		ver     bool
+		e       error
 	)
 
 	flag.IntVar(&vaddr, "sudp_vaddr", -1, "SUDP Virtual Address (e.g., 1001)")
@@ -98,7 +98,7 @@ func main() {
 	flag.BoolVar(&peergw, "peer_gw", false, "Set true if peer is the new default gw")
 
 	flag.BoolVar(&ver, "version", false, "Show Tunelo and SUDP version")
-	flag.BoolVar(&iteractive, "iterative", false, "Display iteractive mode")
+	flag.BoolVar(&display, "iterative", false, "Display iteractive mode")
 
 	prefix := flag.String("keygen", "", "Create a Private/Public key pair in PEM format (e.g., -keygen <prefix>) ")
 
@@ -189,7 +189,7 @@ func main() {
 			fmt.Printf("status=error message=%v\n", err)
 			return
 		} else {
-			if iteractive {
+			if display {
 				c.Display()
 			} else {
 				fmt.Println("status=connected")
