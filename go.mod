@@ -3,7 +3,7 @@ module github.com/tunelo/tunelo
 go 1.22.4
 
 require (
-	github.com/tunelo/sudp v0.0.0-20241113190640-529e706b111a
+	github.com/tunelo/sudp v0.0.0-20241118231702-2de6b4240808
 	github.com/tunelo/utun v0.0.0-20241031012148-2b4dfef70fa4
 	golang.org/x/net v0.31.0
 )

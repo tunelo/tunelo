@@ -32,13 +32,27 @@ type VnetClient struct {
 	sock *sudp.ClientConn
 }
 
-func NewVnetClient(cird string, peer string, laddr *sudp.LocalAddr, raddr *sudp.RemoteAddr) (*VnetClient, error) {
+func NewVnetClient(cird string, peer string, cfg *sudp.ClientConfig) (*VnetClient, error) {
+	laddr, e := cfg.LocalAddress()
+	if e != nil {
+		return nil, e
+	}
+
+	raddr, e := cfg.ServerAddress()
+	if e != nil {
+		return nil, e
+	}
+
 	client, e := sudp.Connect(laddr, raddr, nil)
 	if e != nil {
 		return nil, e
 	}
 	iface, e := opentun(cird, peer)
 	if e != nil {
+		return nil, e
+	}
+
+	if e := iface.SetDefaultGw(peer); e != nil {
 		return nil, e
 	}
 

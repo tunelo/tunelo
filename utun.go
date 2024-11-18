@@ -44,5 +44,6 @@ func opentun(cird string, peer string) (*utun.Utun, error) {
 	if err = iface.SetIP(cird, peer); err != nil {
 		return nil, err
 	}
+
 	return iface, nil
 }

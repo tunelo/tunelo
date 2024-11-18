@@ -17,10 +17,8 @@
 package main
 
 import (
-	"crypto/ecdsa"
 	"flag"
 	"fmt"
-	"net"
 	"os"
 
 	"github.com/tunelo/sudp"
@@ -29,78 +27,75 @@ import (
 )
 
 var (
-	version = "0.1.2-alpha"
+	version = "0.1.3-alpha"
 )
 
 func main() {
 	var (
-		pri     *ecdsa.PrivateKey
-		pub     *ecdsa.PublicKey
-		raddr   *net.UDPAddr
-		cidr    string
-		peer    string
-		hmac    string
-		vaddr   int
-		peergw  bool
 		display bool
 		mode    string
 		config  string
-		ver     bool
-		e       error
+		server  string
+		public  string
+		private string
+
+		port   int
+		cird   string
+		client string
+		new    bool
+		add    bool
+		ver    bool
 	)
 
-	flag.IntVar(&vaddr, "sudp_vaddr", -1, "SUDP Virtual Address (e.g., 1001)")
-	flag.StringVar(&mode, "mode", "client", "VPN mode: client | server")
-	flag.StringVar(&config, "sudp_config", "", "SUDP server config file")
-	flag.StringVar(&hmac, "sudp_hmac_key", "", "SUDP header hmac")
-	flag.Func("sudp_pri", "Path to the SUDP Self Private key file in PEM format (e.g., private.prm)", func(s string) error {
-		pri, e = sudp.PrivateFromPemFile(s)
-		if e != nil {
-			return e
-		}
-		return nil
-	})
+	// Defines the operating mode of Tunelo.
+	// Possible values:
+	// - "client": Runs the VPN in client mode (default).
+	// - "server": Runs the VPN in server mode.
+	// - "config": Configuration mode, used in combination with -new or -add to manage configuration files.
+	flag.StringVar(&mode, "mode", "client", "VPN operating mode: client | server | config (use with -new or -add)")
 
-	flag.Func("sudp_pub", "Path to the SUDP Server's public key in PEM format (e.g., public.pem)", func(s string) error {
-		pub, e = sudp.PublicKeyFromPemFile(s)
-		if e != nil {
-			return e
-		}
-		return nil
-	})
+	// Specifies the configuration file for Tunelo.
+	// This file contains the parameters required to initialize the system in any mode.
+	flag.StringVar(&config, "config", "", "Path to the Tunelo configuration file")
 
-	flag.Func("sudp_endpoint", "SUDP Server's address (e.g., 18.221.232.10:7000)", func(s string) error {
-		raddr, e = net.ResolveUDPAddr("udp4", s)
-		if e != nil {
-			return e
-		}
-		return nil
-	})
+	// Creates a new server configuration file.
+	// Use this with -mode=config and specify the output file name using -server <filename.json>.
+	flag.BoolVar(&new, "new", false, "Create a new server configuration file. Use with -mode=config and -server <filename.json>")
 
-	flag.Func("utun_vaddr", "Virtual utun (osx) - tun/tap (linux) interface address in CIDR format (e.g., 10.0.0.2/24)", func(s string) error {
-		_, _, e := net.ParseCIDR(s)
-		if e != nil {
-			return e
-		}
-		cidr = s
-		return nil
-	})
+	// Adds a new peer (client) to an existing server configuration file and generates a client configuration file.
+	// Use this with -mode=config and specify the server and client file paths with -server and -client.
+	flag.BoolVar(&add, "add", false, "Add a new peer to the server configuration file and generate a client configuration file. -mode=config, -server and -client")
 
-	flag.Func("utun_peer", "Peer vitual address (e.g., 10.0.0.1)", func(s string) error {
-		e := net.ParseIP(s)
-		if e == nil {
-			return fmt.Errorf("invalid peer_address %s", s)
-		}
-		peer = s
-		return nil
-	})
+	// Displays the current versions of Tunelo and the SUDP protocol.
+	// Useful for compatibility checks and ensuring the latest version is in use.
+	flag.BoolVar(&ver, "version", false, "Show the current versions of Tunelo and SUDP")
 
-	flag.BoolVar(&peergw, "peer_gw", false, "Set true if peer is the new default gw")
+	// Enables iterative mode to display real-time progress or debugging information.
+	flag.BoolVar(&display, "iterative", false, "Enable iterative mode to display real-time information")
 
-	flag.BoolVar(&ver, "version", false, "Show Tunelo and SUDP version")
-	flag.BoolVar(&display, "iterative", false, "Display iterative mode")
+	// Specifies the client configuration file to use.
+	// This file contains the client's virtual address and other client-specific parameters.
+	flag.StringVar(&client, "client", "", "Path to the client configuration file (use with -add)")
 
-	prefix := flag.String("keygen", "", "Create a Private/Public key pair in PEM format (e.g., -keygen <prefix>) ")
+	// Specifies the server configuration file to use.
+	// This file contains the server's configuration, including peers and general server settings.
+	flag.StringVar(&server, "server", "", "Path to the server configuration file")
+
+	// Public IP address where the SUDP server listens for incoming connections.
+	// This address must be reachable from the external network.
+	flag.StringVar(&public, "public", "", "Public IP address where the SUDP server listens for external connections")
+
+	// Private IP address where the SUDP server listens for internal connections.
+	// This address is typically used for communication within the local network.
+	flag.StringVar(&private, "private", "0.0.0.0", "Private IP address where the SUDP server listens for internal connections.")
+
+	// Port number where the SUDP server listens for connections.
+	// Both public and private addresses will use this port for communication.
+	flag.IntVar(&port, "port", 7000, "Port number where the SUDP server listens.")
+
+	// CIDR block for the tunnel's virtual IP address.
+	// This address is assigned to the tunnel for communication.
+	flag.StringVar(&cird, "cird", "10.0.0.1/24", "CIDR block for the tunnel's virtual IP address.")
 
 	flag.Parse()
 
@@ -109,85 +104,38 @@ func main() {
 		os.Exit(2)
 	}
 
-	if *prefix != "" {
-		pri := fmt.Sprintf("%s_private.pem", *prefix)
-		pub := fmt.Sprintf("%s_public.pem", *prefix)
-		e := sudp.GeneratePEMKeyPair(pri, pub)
-		if e != nil {
-			fmt.Errorf("generating key pair: %v", e)
-			os.Exit(2)
-		}
-		fmt.Println(fmt.Sprintf("Success: Private Key: %s, Public Key: %s", pri, pub))
-		os.Exit(0)
+	if config == "" && (mode == "client" || mode == "server" || mode == "dump") {
+		fmt.Println("Missing config file")
+		flag.Usage()
+		os.Exit(2)
 	}
 
 	switch mode {
-	case "client":
-		var sharedHmac []byte
-		if pri == nil {
-			fmt.Println("SUDP Self Private key is not present in the argument list")
-			flag.Usage()
+	case "dump":
+		cfg, e := tunelo.LoadClientConfig(config)
+		if e != nil {
+			fmt.Printf("status=error message=%v\n", e)
 			os.Exit(2)
 		}
-
-		if pub == nil {
-			fmt.Println("SUDP Server's Public key is not present in the argument list")
-			flag.Usage()
-			os.Exit(2)
-		}
-
-		if raddr == nil {
-			fmt.Println("SUDP Server address is not present in the argument list")
-			flag.Usage()
-			os.Exit(2)
-		}
-
-		if peer == "" {
-			fmt.Println("Peer virtual network address is not present in the argument list")
-			flag.Usage()
-			os.Exit(2)
-		}
-
-		if cidr == "" {
-			fmt.Println("Self Utun CIDR is not present in the argument list")
-			flag.Usage()
-			os.Exit(2)
-		}
-
-		if vaddr == -1 {
-			fmt.Println("SUDP virtual address is not present in the argument list")
-			flag.Usage()
-			os.Exit(2)
-		}
-
-		if vaddr == 0 {
-			fmt.Println("SUDP virtual address 0 is a wrong value, 0 is reserver to the server")
-			flag.Usage()
-			os.Exit(2)
-		}
-
-		if hmac == "" {
-			sharedHmac = nil
+		fmt.Printf("UTUN_PEER=\"%s\"\n", cfg.UtunPeer)
+		if cfg.Sudp != nil {
+			fmt.Printf("SUDP_ENDPOINT=\"%s\"\n", *cfg.Sudp.Server.NetworkAddress)
 		} else {
-			sharedHmac = []byte(hmac)
+			fmt.Printf("SUDP_ENDPOINT=\"\"\n")
+		}
+		return
+
+	case "client":
+		cfg, e := tunelo.LoadClientConfig(config)
+		if e != nil {
+			fmt.Printf("status=error message=%v\n", e)
+			os.Exit(2)
 		}
 
-		s, _ := net.ResolveUDPAddr("udp4", "0.0.0.0:")
-		laddr := sudp.LocalAddr{
-			VirtualAddress: uint16(vaddr),
-			NetworkAddress: s,
-			PrivateKey:     pri,
-		}
-		paddr := sudp.RemoteAddr{
-			VirtualAddress: 0,
-			NetworkAddress: raddr,
-			SharedHmacKey:  sharedHmac,
-			PublicKey:      pub,
-		}
-		c, err := tunelo.NewVnetClient(cidr, peer, &laddr, &paddr)
+		c, err := tunelo.NewVnetClient(cfg.UtunAddr, cfg.UtunPeer, cfg.Sudp)
 		if err != nil {
 			fmt.Printf("status=error message=%v\n", err)
-			return
+			os.Exit(2)
 		} else {
 			if display {
 				c.Display()
@@ -198,28 +146,85 @@ func main() {
 		err = c.Run()
 		fmt.Printf("status=error message=%v\n", err)
 	case "server":
-		if config == "" {
-			fmt.Println("Missing config file")
-			flag.Usage()
+		cfg, e := tunelo.LoadServerConfig(config)
+		if e != nil {
+			fmt.Printf("status=error message=%v\n", e)
 			os.Exit(2)
 		}
-
-		if cidr == "" {
-			fmt.Println("Self Utun CIDR is not present in the argument list")
-			flag.Usage()
-			os.Exit(2)
-		}
-
-		v, err := tunelo.NewVnetSwitch(cidr, utun.NOPEER, config)
+		v, err := tunelo.NewVnetSwitch(cfg.UtunAddr, utun.NOPEER, cfg.Sudp)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
 		fmt.Println(v.Run())
+	case "config":
+		if !new && !add {
+			fmt.Println("--mode=config must be used with --add or --new")
+			os.Exit(2)
+		}
+
+		if new {
+			if server == "" {
+				fmt.Printf("-new must be used with -server <filename.json>")
+				os.Exit(2)
+			}
+			if public == "" {
+				fmt.Printf("-new must be used with -public <PUBLIC IP>")
+				os.Exit(2)
+			}
+			cfg, err := tunelo.NewServerConfig(private, public, port, "10.0.0.1/24")
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(2)
+			}
+			err = cfg.DumpServerConfig(server)
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(2)
+			}
+			fmt.Println("New server file:", server)
+			os.Exit(0)
+		}
+		if add {
+			if server == "" {
+				fmt.Printf("-add must be used with -server <filename.json>")
+				os.Exit(2)
+			}
+
+			if client == "" {
+				fmt.Printf("-add must be used with -client <filename.json>")
+				os.Exit(2)
+			}
+			cfg, err := tunelo.LoadServerConfig(server)
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(2)
+			}
+
+			peer, err := cfg.AddPeer()
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(2)
+			}
+
+			err = peer.DumpClientConfig(client)
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(2)
+			}
+
+			err = cfg.DumpServerConfig(server)
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(2)
+			}
+			fmt.Println("Updated server file:", server)
+			fmt.Println("New client file:", client)
+		}
+
 	default:
 		fmt.Println("Invalid mode")
 		flag.Usage()
 		os.Exit(2)
 	}
-
 }

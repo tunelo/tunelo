@@ -34,8 +34,14 @@ type VnetSwitch struct {
 	network *net.IPNet
 }
 
-func NewVnetSwitch(cird string, peer string, serverConfig string) (*VnetSwitch, error) {
-	laddr, raddrs, e := sudp.ParseServerConfig(serverConfig)
+func NewVnetSwitch(cird string, peer string, cfg *sudp.ServerConfig) (*VnetSwitch, error) {
+
+	laddr, e := cfg.LocalAddress()
+	if e != nil {
+		return nil, e
+	}
+
+	raddrs, e := cfg.PeersAddresses()
 	if e != nil {
 		return nil, e
 	}
