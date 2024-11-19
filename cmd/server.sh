@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Archivo para almacenar el PID
+PID_FILE="/var/run/tunelo.pid"
+
+# Archivo de log para redirigir la salida y los errores
+LOG_FILE="/var/log/tunelo.log"
+
 # Función para mostrar el uso del script
 function show_usage() {
     echo "Uso: $0 {start|stop|restart} [config_file]"
@@ -13,7 +19,6 @@ fi
 
 # Cargar el archivo de configuración
 CONFIG_FILE=$2
-source "$CONFIG_FILE"
 
 # Ruta del ejecutable de Tunelo VPN Server
 TUNELO_EXEC="./tunelo"
@@ -21,8 +26,15 @@ TUNELO_EXEC="./tunelo"
 # Función para iniciar el servidor como daemon
 function start_server() {
     if [ -f "$PID_FILE" ]; then
-        echo "Tunelo VPN Server is running"
-        exit 1
+        pid=$(cat "$PID_FILE")
+        # Comprobar si el proceso con el PID aún está activo
+        if [[ $(ps -p "$pid" | grep "$pid") != "" ]]; then
+            echo "Tunelo VPN Server is already running with PID $pid."
+            exit 1
+        else
+            echo "PID file exists but the process is not running. Cleaning up."
+            rm -f "$PID_FILE"
+        fi
     fi
 
     echo "Starting Tunelo VPN Server as a daemon..."
@@ -35,7 +47,7 @@ function start_server() {
     echo "  $ sudo echo 1 > /proc/sys/net/ipv4/ip_forward"
 
     # Ejecutar Tunelo en segundo plano como daemon y redirigir salida y errores
-    nohup $TUNELO_EXEC -mode=server -sudp_config "$SUDP_CONFIG" -utun_vaddr "$UTUN_VADDR" \
+    nohup $TUNELO_EXEC -mode=server -config "$CONFIG_FILE" \
         >> "$LOG_FILE" 2>&1 &
 
     echo $! > "$PID_FILE"

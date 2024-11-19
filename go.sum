@@ -1,7 +1,7 @@
-github.com/tunelo/sudp v0.0.0-20241117165001-e28f815a43ba h1:pX6k8xocFLL3l8m7P7XjRv/ZSG7cXZwTy7NIbhVzl8Y=
-github.com/tunelo/sudp v0.0.0-20241117165001-e28f815a43ba/go.mod h1:MBycHwpktxt3Axn4UZ0y+QTamSl5/ckWXcMQ6EOnxic=
 github.com/tunelo/sudp v0.0.0-20241118231702-2de6b4240808 h1:Ys0XxmjXxFNOPyk+5AGJBEVuQDwTWBaXUG3cM8s9KL0=
 github.com/tunelo/sudp v0.0.0-20241118231702-2de6b4240808/go.mod h1:MBycHwpktxt3Axn4UZ0y+QTamSl5/ckWXcMQ6EOnxic=
+github.com/tunelo/sudp v0.0.0-20241119013809-973d6ce3c278 h1:aANu5Gi1NUfsKQo0jL6XkuCkeYKL+1yGiKFco9IGqkk=
+github.com/tunelo/sudp v0.0.0-20241119013809-973d6ce3c278/go.mod h1:MBycHwpktxt3Axn4UZ0y+QTamSl5/ckWXcMQ6EOnxic=
 github.com/tunelo/utun v0.0.0-20241031012148-2b4dfef70fa4 h1:sFRaCoj8K/i8BGKO47HF2L/c/QCN/+ak20OD+y7eEAM=
 github.com/tunelo/utun v0.0.0-20241031012148-2b4dfef70fa4/go.mod h1:Gwkj9qKoKpdwIsFM0iQRRAxwR+ntwSKMJT8WEOmtlbg=
 golang.org/x/crypto v0.29.0 h1:L5SG1JTTXupVV3n6sUqMTeWbjAyfPwoda2DLX8J8FrQ=

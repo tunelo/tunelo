@@ -118,6 +118,7 @@ func main() {
 			os.Exit(2)
 		}
 		fmt.Printf("UTUN_PEER=\"%s\"\n", cfg.UtunPeer)
+		fmt.Printf("UTUN_ADDR=\"%s\"\n", cfg.UtunAddr)
 		if cfg.Sudp != nil {
 			fmt.Printf("SUDP_ENDPOINT=\"%s\"\n", *cfg.Sudp.Server.NetworkAddress)
 		} else {
@@ -165,11 +166,11 @@ func main() {
 
 		if new {
 			if server == "" {
-				fmt.Printf("-new must be used with -server <filename.json>")
+				fmt.Println("-new must be used with -server <filename.json>")
 				os.Exit(2)
 			}
 			if public == "" {
-				fmt.Printf("-new must be used with -public <PUBLIC IP>")
+				fmt.Println("-new must be used with -public <PUBLIC IP>")
 				os.Exit(2)
 			}
 			cfg, err := tunelo.NewServerConfig(private, public, port, "10.0.0.1/24")
@@ -187,12 +188,12 @@ func main() {
 		}
 		if add {
 			if server == "" {
-				fmt.Printf("-add must be used with -server <filename.json>")
+				fmt.Println("-add must be used with -server <filename.json>")
 				os.Exit(2)
 			}
 
 			if client == "" {
-				fmt.Printf("-add must be used with -client <filename.json>")
+				fmt.Println("-add must be used with -client <filename.json>")
 				os.Exit(2)
 			}
 			cfg, err := tunelo.LoadServerConfig(server)
