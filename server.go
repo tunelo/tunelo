@@ -61,7 +61,7 @@ func NewVnetSwitch(cird string, peer string, cfg *sudp.ServerConfig) (*VnetSwitc
 		self:    self,
 		Tun:     iface,
 		sock:    server,
-		route:   &RouteTable{},
+		route:   NewRouteTable(),
 		network: n,
 	}
 	return &vnets, nil
