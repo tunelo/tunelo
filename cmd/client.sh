@@ -85,6 +85,7 @@ function wait_running() {
                 exit 1
             else
                 echo "Status: $status"
+                exit 0
             fi
             break
         fi

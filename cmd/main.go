@@ -42,6 +42,7 @@ func main() {
 		port   int
 		cird   string
 		client string
+		peergw bool
 		new    bool
 		add    bool
 		ver    bool
@@ -97,6 +98,7 @@ func main() {
 	// This address is assigned to the tunnel for communication.
 	flag.StringVar(&cird, "cird", "10.0.0.1/24", "CIDR block for the tunnel's virtual IP address.")
 
+	flag.BoolVar(&peergw, "peergw", false, "Use peer as default gateway. Warning - a route to SUDP server MUST exist")
 	flag.Parse()
 
 	if ver {
@@ -121,8 +123,10 @@ func main() {
 		fmt.Printf("UTUN_ADDR=\"%s\"\n", cfg.UtunAddr)
 		if cfg.Sudp != nil {
 			fmt.Printf("SUDP_ENDPOINT=\"%s\"\n", *cfg.Sudp.Server.NetworkAddress)
+			fmt.Printf("SUDP_VADDR=\"%d\"\n", *cfg.Sudp.Host.VirtualAddress)
 		} else {
 			fmt.Printf("SUDP_ENDPOINT=\"\"\n")
+			fmt.Printf("SUDP_VADDR=\"\"\n")
 		}
 		return
 
@@ -133,7 +137,7 @@ func main() {
 			os.Exit(2)
 		}
 
-		c, err := tunelo.NewVnetClient(cfg.UtunAddr, cfg.UtunPeer, cfg.Sudp)
+		c, err := tunelo.NewVnetClient(cfg.UtunAddr, cfg.UtunPeer, cfg.Sudp, peergw)
 		if err != nil {
 			fmt.Printf("status=error message=%v\n", err)
 			os.Exit(2)

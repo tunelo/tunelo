@@ -32,7 +32,7 @@ type VnetClient struct {
 	sock *sudp.ClientConn
 }
 
-func NewVnetClient(cird string, peer string, cfg *sudp.ClientConfig) (*VnetClient, error) {
+func NewVnetClient(cird string, peer string, cfg *sudp.ClientConfig, peergw bool) (*VnetClient, error) {
 	laddr, e := cfg.LocalAddress()
 	if e != nil {
 		return nil, e
@@ -52,8 +52,10 @@ func NewVnetClient(cird string, peer string, cfg *sudp.ClientConfig) (*VnetClien
 		return nil, e
 	}
 
-	if e := iface.SetDefaultGw(peer); e != nil {
-		return nil, e
+	if peergw {
+		if e := iface.SetDefaultGw(peer); e != nil {
+			return nil, e
+		}
 	}
 
 	self, _, e := net.ParseCIDR(cird)
