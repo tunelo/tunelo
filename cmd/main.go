@@ -123,7 +123,7 @@ func main() {
 		fmt.Printf("UTUN_ADDR=\"%s\"\n", cfg.UtunAddr)
 		if cfg.Sudp != nil {
 			fmt.Printf("SUDP_ENDPOINT=\"%s\"\n", *cfg.Sudp.Server.NetworkAddress)
-			fmt.Printf("SUDP_VADDR=\"%d\"\n", *cfg.Sudp.Host.VirtualAddress)
+			fmt.Printf("SUDP_VADDR=\"%d\"\n", cfg.Sudp.Host.VirtualAddress)
 		} else {
 			fmt.Printf("SUDP_ENDPOINT=\"\"\n")
 			fmt.Printf("SUDP_VADDR=\"\"\n")
