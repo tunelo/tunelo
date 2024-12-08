@@ -129,7 +129,6 @@ func main() {
 			fmt.Printf("SUDP_VADDR=\"\"\n")
 		}
 		return
-
 	case "client":
 		cfg, e := tunelo.LoadClientConfig(config)
 		if e != nil {
